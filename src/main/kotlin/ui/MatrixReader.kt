@@ -21,11 +21,11 @@ class MatrixReader {
         throw MatrixReaderExceptions.IncorrectMatrixSize()
     }
 
-    private fun getParsedData(data: List<String>): MutableList<MutableList<Double>> {
+    private fun getParsedData(data: List<String>): List<List<Double>> {
         val parsedMatrix = try {
             data.map { line ->
-                line.split(" ").map { it.toDouble() }.toMutableList()
-            }.toMutableList()
+                line.split(" ").map { it.toDouble() }
+            }
         } catch (ex: Exception) {
             throw MatrixReaderExceptions.MatrixParsedException()
         }
@@ -42,11 +42,11 @@ class MatrixReader {
         return parsedMatrix
     }
 
-    fun getParsedMatrixFromFile(fileName: String): MutableList<MutableList<Double>> {
+    fun getParsedMatrixFromFile(fileName: String): List<List<Double>> {
         return getParsedData(data = readFromFile(fileName = fileName))
     }
 
-    fun getParsedMatrixFromConsole(): MutableList<MutableList<Double>> {
+    fun getParsedMatrixFromConsole(): List<List<Double>> {
         return getParsedData(data = readFromConsole())
     }
 }
