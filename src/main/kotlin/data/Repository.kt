@@ -2,10 +2,13 @@ package data
 
 import data.model.Approach
 import data.model.Matrix
+import data.model.Result
 import kotlin.math.abs
 
 class Repository(
-    private val matrix: Matrix
+    private val matrix: Matrix,
+    private val acceptableInaccuracy: Double = ACCEPTABLE_INACCURACY,
+    private val iterationLimit: Int = ITERATION_LIMIT,
 ) {
 
     private var lastApproach = Approach(
@@ -32,6 +35,10 @@ class Repository(
         nowApproach = Approach.emptyApproach(matrix.rowsCount)
     }
 
+    private fun isCurrentAccuracyAcceptable(): Boolean {
+        return nowApproach.inaccuraciesVector.all { it <= acceptableInaccuracy }
+    }
+
     private fun updateInaccuraciesVector() {
         val newNowInaccuraciesVector = mutableListOf<Double>()
         for (i in 0..<matrix.rowsCount) {
@@ -48,6 +55,20 @@ class Repository(
             nowApproach.approachVector
         }
         updateInaccuraciesVector()
+    }
+
+    fun calculateEquation(): Result {
+        val iterationsList = mutableListOf<Approach>()
+        for (i in 0..<iterationLimit) {
+            iterate()
+            updateInaccuraciesVector()
+            iterationsList.add(nowApproach)
+            if (isCurrentAccuracyAcceptable()) {
+                break
+            }
+            swapApproaches()
+        }
+        return Result(rows = iterationsList)
     }
 
     companion object {
