@@ -1,4 +1,4 @@
-package ui
+package ui.io
 
 import java.io.File
 import java.nio.charset.Charset
@@ -36,7 +36,7 @@ class MatrixReader {
             }
         }
 
-        if (parsedMatrix.size == 0) {
+        if (parsedMatrix.isEmpty()) {
             throw MatrixReaderExceptions.EmptyMatrix()
         }
         return parsedMatrix

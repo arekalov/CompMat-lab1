@@ -5,22 +5,7 @@ import data.model.Matrix
 import data.model.Result
 import kotlin.math.abs
 
-class Repository(
-    private val matrix: Matrix,
-    private val acceptableInaccuracy: Double = ACCEPTABLE_INACCURACY,
-    private val iterationLimit: Int = ITERATION_LIMIT,
-) {
-
-    private var lastApproach = Approach(
-        approachVector = calculateZeroApproach(matrix),
-        inaccuraciesVector = List(matrix.rowsCount) { 100.0 }
-    )
-
-    private var nowApproach = Approach(
-        approachVector = List(matrix.rowsCount) { 0.0 },
-        inaccuraciesVector = List(matrix.rowsCount) { 100.0 }
-    )
-
+class Repository {
     private fun calculateZeroApproach(matrix: Matrix): List<Double> {
         val zeroApproachVector = mutableListOf<Double>()
         for (i in matrix.matrix.indices) {
@@ -30,16 +15,27 @@ class Repository(
         TODO("Добавить проверку при делении на ноль")
     }
 
-    private fun swapApproaches() {
-        lastApproach = nowApproach.copy()
-        nowApproach = Approach.emptyApproach(matrix.rowsCount)
+    private fun swapApproaches(
+        matrix: Matrix,
+        nowApproach: Approach
+    ): Pair<Approach, Approach> {
+        val lastApproachNew = nowApproach.copy()
+        val nowApproachNew = Approach.emptyApproach(matrix.rowsCount)
+        return lastApproachNew to nowApproachNew
     }
 
-    private fun isCurrentAccuracyAcceptable(): Boolean {
+    private fun isCurrentAccuracyAcceptable(
+        acceptableInaccuracy: Double,
+        nowApproach: Approach
+    ): Boolean {
         return nowApproach.inaccuraciesVector.all { it <= acceptableInaccuracy }
     }
 
-    private fun updateInaccuraciesVector() {
+    private fun updateInaccuraciesVector(
+        matrix: Matrix,
+        lastApproach: Approach,
+        nowApproach: Approach
+    ) {
         val newNowInaccuraciesVector = mutableListOf<Double>()
         for (i in 0..<matrix.rowsCount) {
             newNowInaccuraciesVector.add(
@@ -49,24 +45,59 @@ class Repository(
         }
     }
 
-    private fun iterate() {
+    private fun iterate(
+        matrix: Matrix,
+        lastApproach: Approach,
+        nowApproach: Approach
+    ) {
         for (i in 0..<matrix.rowsCount) {
-            val nowApproachI = matrix.approachCalculateFuns[i].invoke(lastApproach, nowApproach)
+            matrix.approachCalculateFuns[i].invoke(lastApproach, nowApproach)
             nowApproach.approachVector
         }
-        updateInaccuraciesVector()
+        updateInaccuraciesVector(
+            matrix = matrix,
+            lastApproach = lastApproach,
+            nowApproach = nowApproach
+        )
     }
 
-    fun calculateEquation(): Result {
+    fun calculateEquation(
+        matrix: Matrix,
+        acceptableInaccuracy: Double = ACCEPTABLE_INACCURACY,
+        iterationLimit: Int = ITERATION_LIMIT,
+    ): Result {
+        var lastApproach = Approach(
+            approachVector = calculateZeroApproach(matrix),
+            inaccuraciesVector = List(matrix.rowsCount) { 100.0 }
+        )
+
+        var nowApproach = Approach(
+            approachVector = List(matrix.rowsCount) { 0.0 },
+            inaccuraciesVector = List(matrix.rowsCount) { 100.0 }
+        )
+
         val iterationsList = mutableListOf<Approach>()
         for (i in 0..<iterationLimit) {
-            iterate()
-            updateInaccuraciesVector()
+            iterate(
+                matrix = matrix,
+                nowApproach = nowApproach,
+                lastApproach = lastApproach
+            )
+            updateInaccuraciesVector(
+                matrix = matrix,
+                lastApproach = lastApproach,
+                nowApproach = nowApproach
+            )
             iterationsList.add(nowApproach)
-            if (isCurrentAccuracyAcceptable()) {
+            if (isCurrentAccuracyAcceptable(
+                    acceptableInaccuracy = acceptableInaccuracy,
+                    nowApproach = nowApproach
+                )
+            ) {
                 break
             }
-            swapApproaches()
+            lastApproach = nowApproach.copy()
+            nowApproach = Approach.emptyApproach(matrix.rowsCount)
         }
         return Result(rows = iterationsList)
     }

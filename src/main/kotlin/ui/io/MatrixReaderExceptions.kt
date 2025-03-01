@@ -1,4 +1,4 @@
-package ui
+package ui.io
 
 sealed class MatrixReaderExceptions(override val message: String) : Exception() {
     class IncorrectFileName: MatrixReaderExceptions("Error: incorrect file name, repeat")
