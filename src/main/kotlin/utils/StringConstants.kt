@@ -6,10 +6,15 @@ enum class StringConstants(val msg: String) {
     DIVIDER_MSG("-------------\n"),
     INPUT_COMMAND_MSG("Input your command!"),
     GREETING_MSG("Hello, this is System of Linear Equations calculator!"),
-    HELP_MSG("Menu: \nhelp - to see this text again \nmode <file/console> - select input mode \ncalculate - start solving system \nquit - bye, bye"),
+    HELP_MSG(
+        "Menu: \n1) help - to see this text again \n2) chmod <file filepath | console> - select input mode\n" +
+                "3) mode - get current mode\n4) calc - start solving system \n5) quit - bye, bye"
+    ),
     BYE_MSG("Bye, bye!"),
     CALCULATION_MSG("Calculation in progress, pleas wait!"),
     INPUT_TYPE_CHANGED_MSG("Input mode successfully changed"),
+    CURRENT_INPUT_TYPE("Current input mode: "),
+    RESULT_READY_MSG("Result ready"),
 
     // Errors
     ARG_COUNT_ERROR("Error count of argument, see menu to learn program commands and try again"),

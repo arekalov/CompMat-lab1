@@ -24,7 +24,7 @@ class MatrixReader {
     private fun getParsedData(data: List<String>): List<List<Double>> {
         val parsedMatrix = try {
             data.map { line ->
-                line.split(" ").map { it.toDouble() }
+                line.replace(',', '.').split(" ").map { it.toDouble() }
             }
         } catch (ex: Exception) {
             throw MatrixReaderExceptions.MatrixParsedException()

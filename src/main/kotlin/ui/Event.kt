@@ -7,6 +7,8 @@ sealed class Event {
 
     data object Quit : Event()
 
+    data object SetInputState : Event()
+
     data class Calculate(
         val matrix: Matrix
     ) : Event()
@@ -16,7 +18,32 @@ sealed class Event {
     ) : Event()
 }
 
-enum class InputType {
-    File,
-    Console,
+sealed interface InputType {
+    val stringType: String
+
+    class Console : InputType {
+        override val stringType: String
+            get() = STRING_TYPE
+
+        companion object {
+            const val STRING_TYPE = "console"
+        }
+
+        override fun toString(): String {
+            return STRING_TYPE
+        }
+    }
+
+    data class File(val filePath: String) : InputType {
+        override val stringType: String
+            get() = STRING_TYPE
+
+        override fun toString(): String {
+            return "$STRING_TYPE $filePath"
+        }
+
+        companion object {
+            const val STRING_TYPE = "file"
+        }
+    }
 }

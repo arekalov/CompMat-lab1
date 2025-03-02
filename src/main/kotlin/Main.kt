@@ -15,7 +15,7 @@ class Main {
     private val ioController = IoController(matrixReader = matrixReader)
 
     fun run() = runBlocking {
-        IoController.printMessage(StringConstants.GREETING_MSG)
+        ioController.printGreeting()
         launch(Dispatchers.IO) {
             stateHolder.state.collectLatest { state ->
                 when (state) {
@@ -26,13 +26,20 @@ class Main {
 
                     is State.Input -> {
                         while (isActive && stateHolder.state.value is State.Input) {
-                            val action = ioController.reduce()
+                            val action = ioController.reduce(stateHolder.state.value as State.Input)
                             stateHolder.reduce(action)
                         }
                     }
 
                     is State.Work -> {
-                        IoController.printMessage(StringConstants.CALCULATION_MSG)
+                        if (state.result == null) {
+                            IoController.printMessage(StringConstants.CALCULATION_MSG)
+                        } else {
+                            println(state.result)
+                            IoController.printMessage(StringConstants.RESULT_READY_MSG)
+                            IoController.printMessage(StringConstants.DIVIDER_MSG)
+                            IoController.printMessage(StringConstants.INPUT_COMMAND_MSG)
+                        }
                     }
                 }
             }
@@ -42,4 +49,8 @@ class Main {
 
 fun main() {
     Main().run()
+//    val repo = Repository()
+//    val matrix = Matrix(MatrixReader().getParsedMatrixFromFile("/Users/arekalov/Itmo/4/CompMat/CompMat-lab1/src/main/resources/matrixAsset"))
+//    val res = repo.calculateEquation(matrix)
+//    println(res)
 }

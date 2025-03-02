@@ -15,12 +15,12 @@ data class Result(
                 (1..size).map { "сигма$it".length })
             .maxOrNull() ?: 0
 
-        val formatPattern = "%${maxColumnWidth}.2f"
+        val formatPattern = "%${maxColumnWidth}.4f"
 
         val approachHeaders = (1..size).joinToString(" | ") { "x$it".padStart(maxColumnWidth) }
         val sigmaHeaders = (1..size).joinToString(" | ") { "σ$it".padStart(maxColumnWidth) }
 
-        val totalWidth = (maxColumnWidth + 3) * size * 2 + 11
+        val totalWidth = (maxColumnWidth + 3) * size * 2 + 1
         val separator = "-".repeat(totalWidth)
 
         fun formatList(list: List<Double>): String {
@@ -28,7 +28,7 @@ data class Result(
         }
 
         val dataLines = rows.mapIndexed { index, approach ->
-            "iteration ${index + 1}".padEnd(10) + " || " + formatList(approach.approachVector) + " || " + formatList(
+            "iteration ${index + 1}".padEnd(12) + " || " + formatList(approach.approachVector) + " || " + formatList(
                 approach.inaccuraciesVector
             )
         }.joinToString("\n")

@@ -26,7 +26,8 @@ data class Matrix(
                     }
                 }
                 sum += matrix[i].last()
-                sum / matrix[i][i]
+                sum /= matrix[i][i]
+                sum
             }
         }
     }

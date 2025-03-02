@@ -9,7 +9,7 @@ class Repository {
     private fun calculateZeroApproach(matrix: Matrix): List<Double> {
         val zeroApproachVector = mutableListOf<Double>()
         for (i in matrix.matrix.indices) {
-            zeroApproachVector.add(matrix.matrix[i][i] / matrix.matrix[i].last())
+            zeroApproachVector.add(matrix.matrix[i].last() / matrix.matrix[i][i])
         }
         return zeroApproachVector
         TODO("Добавить проверку при делении на ноль")
@@ -35,29 +35,31 @@ class Repository {
         matrix: Matrix,
         lastApproach: Approach,
         nowApproach: Approach
-    ) {
+    ): Approach {
         val newNowInaccuraciesVector = mutableListOf<Double>()
-        for (i in 0..<matrix.rowsCount) {
-            newNowInaccuraciesVector.add(
-                abs(nowApproach.approachVector[i] - lastApproach.approachVector[i]) /
-                        abs(nowApproach.approachVector[i])
-            )
+        for (i in 0 until matrix.rowsCount) {
+            val inaccuracy = abs(nowApproach.approachVector[i] - lastApproach.approachVector[i]) /
+                    abs(nowApproach.approachVector[i])
+            newNowInaccuraciesVector.add(inaccuracy)
         }
+        return nowApproach.copy(inaccuraciesVector = newNowInaccuraciesVector)
     }
 
     private fun iterate(
         matrix: Matrix,
         lastApproach: Approach,
         nowApproach: Approach
-    ) {
+    ): Approach {
+        val newNowApproach = MutableList(matrix.rowsCount) { 0.0 }
         for (i in 0..<matrix.rowsCount) {
-            matrix.approachCalculateFuns[i].invoke(lastApproach, nowApproach)
-            nowApproach.approachVector
+            val res: Double =
+                matrix.approachCalculateFuns[i].invoke(lastApproach, nowApproach.copy(approachVector = newNowApproach))
+            newNowApproach[i] = res
         }
-        updateInaccuraciesVector(
+        return updateInaccuraciesVector(
             matrix = matrix,
             lastApproach = lastApproach,
-            nowApproach = nowApproach
+            nowApproach = nowApproach.copy(approachVector = newNowApproach)
         )
     }
 
@@ -78,15 +80,10 @@ class Repository {
 
         val iterationsList = mutableListOf<Approach>()
         for (i in 0..<iterationLimit) {
-            iterate(
+            nowApproach = iterate(
                 matrix = matrix,
                 nowApproach = nowApproach,
                 lastApproach = lastApproach
-            )
-            updateInaccuraciesVector(
-                matrix = matrix,
-                lastApproach = lastApproach,
-                nowApproach = nowApproach
             )
             iterationsList.add(nowApproach)
             if (isCurrentAccuracyAcceptable(

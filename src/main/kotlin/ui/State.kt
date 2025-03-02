@@ -12,7 +12,6 @@ sealed class State {
     ) : State()
 
     data class Input(
-        val inputType: InputType = InputType.Console,
-        val error: Error? = null,
+        val inputType: InputType = InputType.Console()
     ) : State()
 }
