@@ -7,22 +7,26 @@ import utils.StringConstants
 class IoController(private val matrixReader: MatrixReader) {
     fun reduce(currentState: State.Input): Event {
         printMessage(StringConstants.INPUT_COMMAND_MSG)
-        val inputText = readln().split(" ").map { it.lowercase() }
-        if (inputText.isEmpty()) {
-            printMessage(constant = StringConstants.EMPTY_COMMAND_ERROR, needToPrintDivider = true)
-        }
-        return when (inputText.first()) {
-            "quit" -> quit()
+        return try {
+            val inputText = readln().split(" ").map { it.lowercase() }
+            if (inputText.isEmpty()) {
+                printMessage(constant = StringConstants.EMPTY_COMMAND_ERROR, needToPrintDivider = true)
+            }
+            when (inputText.first()) {
+                "quit" -> quit()
 
-            "calc" -> calculate(inputType = currentState.inputType)
+                "calc" -> calculate(inputType = currentState.inputType)
 
-            "help" -> help()
+                "help" -> help()
 
-            "chmod" -> chmod(args = inputText)
+                "chmod" -> chmod(args = inputText)
 
-            "mode" -> getMod(currentInputType = currentState.inputType)
+                "mode" -> getMod(currentInputType = currentState.inputType)
 
-            else -> unexpectedCommand()
+                else -> unexpectedCommand()
+            }
+        } catch (ex: RuntimeException) {
+            quit()
         }
     }
 
