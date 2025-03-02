@@ -12,7 +12,6 @@ class Repository {
             zeroApproachVector.add(matrix.matrix[i].last() / matrix.matrix[i][i])
         }
         return zeroApproachVector
-        TODO("Добавить проверку при делении на ноль")
     }
 
     private fun swapApproaches(
@@ -65,7 +64,7 @@ class Repository {
 
     fun calculateEquation(
         matrix: Matrix,
-        acceptableInaccuracy: Double = ACCEPTABLE_INACCURACY,
+        acceptableInaccuracy: Double,
         iterationLimit: Int = ITERATION_LIMIT,
     ): Result {
         var lastApproach = Approach(
@@ -101,6 +100,5 @@ class Repository {
 
     companion object {
         const val ITERATION_LIMIT = 100
-        const val ACCEPTABLE_INACCURACY = 0.01
     }
 }

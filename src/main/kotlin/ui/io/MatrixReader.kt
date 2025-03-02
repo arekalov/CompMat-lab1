@@ -1,22 +1,30 @@
 package ui.io
 
+import data.model.Matrix
+import utils.StringConstants
 import java.io.File
 import java.nio.charset.Charset
 
+const val ACCEPTABLE_INACCURACY = 0.01
+
 class MatrixReader {
-    private fun readFromFile(fileName: String, charset: Charset = Charsets.UTF_8): List<String> = try {
-        File(fileName).readLines(charset = charset)
+    private fun readFromFile(fileName: String, charset: Charset = Charsets.UTF_8): Pair<List<String>, Double> = try {
+        val fileLines = File(fileName).readLines(charset = charset)
+        fileLines.subList(1, fileLines.size) to fileLines.first().toDouble()
     } catch (ex: Exception) {
         throw MatrixReaderExceptions.IncorrectFileName()
     }
 
-    private fun readFromConsole(): List<String> = try {
-        val rowsCount = readln().toInt()
+    private fun readFromConsole(): Pair<List<String>, Double> = try {
+        IoController.printMessage(StringConstants.INPUT_ROW_COUNT_MSG)
+        val rowsCount = readln().split(" ")
+        val inaccuracy = rowsCount.getOrNull(1)?.toDouble() ?: ACCEPTABLE_INACCURACY
+        IoController.printMessage(StringConstants.INPUT_ROWS_MS)
         val data = mutableListOf<String>()
-        repeat(rowsCount) {
+        repeat(rowsCount[0].toInt()) {
             data.add(readln())
         }
-        data
+        data to inaccuracy
     } catch (ex: Exception) {
         throw MatrixReaderExceptions.IncorrectMatrixSize()
     }
@@ -42,11 +50,20 @@ class MatrixReader {
         return parsedMatrix
     }
 
-    fun getParsedMatrixFromFile(fileName: String): List<List<Double>> {
-        return getParsedData(data = readFromFile(fileName = fileName))
+    fun getParsedMatrixFromFile(fileName: String): Matrix {
+        val (data, inaccuracy) = readFromFile(fileName)
+        val parsedData = getParsedData(data)
+        return Matrix(matrix = parsedData, inaccuracy = inaccuracy)
     }
 
-    fun getParsedMatrixFromConsole(): List<List<Double>> {
-        return getParsedData(data = readFromConsole())
+    fun getParsedMatrixFromConsole(): Matrix {
+        val (data, inaccuracy) = readFromConsole()
+        val parsedData = getParsedData(data)
+        return Matrix(matrix = parsedData, inaccuracy = inaccuracy)
     }
+}
+
+fun main() {
+    val a = MatrixReader().getParsedMatrixFromConsole()
+    println(a)
 }

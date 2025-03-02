@@ -1,5 +1,6 @@
 package data.model
 
+import kotlin.math.max
 
 data class Result(
     val rows: List<Approach>,
@@ -8,33 +9,45 @@ data class Result(
         if (rows.isEmpty()) return "No data available"
 
         val size = rows[0].approachVector.size
+        val iterationsColumnWidth = "Iteration".length.coerceAtLeast("iteration XX".length)
 
-        val maxColumnWidth = (rows.flatMap { it.approachVector + it.inaccuraciesVector }
-            .map { "%.2f".format(it).length } +
-                (1..size).map { "x$it".length } +
-                (1..size).map { "сигма$it".length })
-            .maxOrNull() ?: 0
+        val columnWidths = MutableList(size * 2) { 0 }
 
-        val formatPattern = "%${maxColumnWidth}.4f"
+        for (i in 0..<size) {
+            val xHeaderWidth = "x${i + 1}".length
+            val sigmaHeaderWidth = "σ${i + 1}".length
+            val maxXWidth = rows.maxOf { "% .4f".format(it.approachVector[i]).length }
+            val maxSigmaWidth = rows.maxOf { "% .4f".format(it.inaccuraciesVector[i]).length }
 
-        val approachHeaders = (1..size).joinToString(" | ") { "x$it".padStart(maxColumnWidth) }
-        val sigmaHeaders = (1..size).joinToString(" | ") { "σ$it".padStart(maxColumnWidth) }
+            columnWidths[i] = max(xHeaderWidth, maxXWidth)
+            columnWidths[size + i] = max(sigmaHeaderWidth, maxSigmaWidth)
+        }
 
-        val totalWidth = (maxColumnWidth + 3) * size * 2 + 1
-        val separator = "-".repeat(totalWidth)
+        val approachHeaders = (0..<size)
+            .joinToString(" | ") { "x${it + 1}".padStart(columnWidths[it]) }
 
-        fun formatList(list: List<Double>): String {
-            return list.joinToString(" | ") { formatPattern.format(it) }
+        val sigmaHeaders = (0..<size)
+            .joinToString(" | ") { "σ${it + 1}".padStart(columnWidths[size + it]) }
+
+        val separatorLength = iterationsColumnWidth + 4 +
+                columnWidths.sum() + (3 * (columnWidths.size - 1)) + 4
+        val separator = "-".repeat(separatorLength)
+
+        fun formatList(list: List<Double>, widths: List<Int>): String {
+            return list.mapIndexed { i, value ->
+                "% .4f".format(value).padStart(widths[i])
+            }.joinToString(" | ")
         }
 
         val dataLines = rows.mapIndexed { index, approach ->
-            "iteration ${index + 1}".padEnd(12) + " || " + formatList(approach.approachVector) + " || " + formatList(
-                approach.inaccuraciesVector
-            )
+            val iterationLabel = "iteration ${index + 1}".padEnd(iterationsColumnWidth)
+            val xVals = formatList(approach.approachVector, columnWidths.subList(0, size))
+            val sigmaVals = formatList(approach.inaccuraciesVector, columnWidths.subList(size, size * 2))
+            "$iterationLabel || $xVals || $sigmaVals"
         }.joinToString("\n")
 
         return buildString {
-            appendLine("Iteration   || $approachHeaders || $sigmaHeaders")
+            appendLine("${"Iteration".padEnd(iterationsColumnWidth)} || $approachHeaders || $sigmaHeaders")
             appendLine(separator)
             append(dataLines)
         }

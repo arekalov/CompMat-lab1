@@ -15,6 +15,8 @@ enum class StringConstants(val msg: String) {
     INPUT_TYPE_CHANGED_MSG("Input mode successfully changed"),
     CURRENT_INPUT_TYPE("Current input mode: "),
     RESULT_READY_MSG("Result ready"),
+    INPUT_ROW_COUNT_MSG("Input row count (mandatory) and inaccuracy (optional) separated by a space"),
+    INPUT_ROWS_MS("Enter the rows of the matrix one by one separated by a space"),
 
     // Errors
     ARG_COUNT_ERROR("Error count of argument, see menu to learn program commands and try again"),

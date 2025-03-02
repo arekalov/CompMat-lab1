@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ui.io.InputType
 
 class StateHolder(
     private val repository: Repository,
@@ -32,7 +33,8 @@ class StateHolder(
 
             is Event.SetInputState -> onSetInputStateReceived()
 
-            is Event.Nothing -> {/* do nothing */ }
+            is Event.Nothing -> {/* do nothing */
+            }
         }
     }
 
@@ -46,9 +48,10 @@ class StateHolder(
 
     private fun onCalculateEventReceived(event: Event.Calculate) {
         _state.value = State.Work(matrix = event.matrix)
-        val job = defaultCoroutineScope.launch {
+        defaultCoroutineScope.launch {
             val result = repository.calculateEquation(
-                matrix = (state.value as State.Work).matrix
+                matrix = (state.value as State.Work).matrix,
+                acceptableInaccuracy = (state.value as State.Work).matrix.inaccuracy
             )
             _state.value = (state.value as State.Work).copy(result = result)
         }

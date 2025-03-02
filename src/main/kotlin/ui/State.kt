@@ -2,6 +2,7 @@ package ui
 
 import data.model.Matrix
 import data.model.Result
+import ui.io.InputType
 
 sealed class State {
     data object Off : State()

@@ -1,6 +1,7 @@
 import data.Repository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import ui.Event
 import ui.State
 import ui.StateHolder
 import ui.io.IoController
@@ -36,9 +37,8 @@ class Main {
                             IoController.printMessage(StringConstants.CALCULATION_MSG)
                         } else {
                             println(state.result)
-                            IoController.printMessage(StringConstants.RESULT_READY_MSG)
-                            IoController.printMessage(StringConstants.DIVIDER_MSG)
-                            IoController.printMessage(StringConstants.INPUT_COMMAND_MSG)
+                            IoController.printMessage(StringConstants.RESULT_READY_MSG, needToPrintDivider = true)
+                            stateHolder.reduce(Event.SetInputState)
                         }
                     }
                 }
@@ -49,8 +49,4 @@ class Main {
 
 fun main() {
     Main().run()
-//    val repo = Repository()
-//    val matrix = Matrix(MatrixReader().getParsedMatrixFromFile("/Users/arekalov/Itmo/4/CompMat/CompMat-lab1/src/main/resources/matrixAsset"))
-//    val res = repo.calculateEquation(matrix)
-//    println(res)
 }
