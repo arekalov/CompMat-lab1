@@ -32,7 +32,7 @@ class MatrixReader {
     private fun getParsedData(data: List<String>): List<List<Double>> {
         val parsedMatrix = try {
             data.map { line ->
-                line.replace(',', '.').split(" ").map { it.toDouble() }
+                line.replace(',', '.').split("""\s+""".toRegex()).map { it.toDouble()}
             }
         } catch (ex: Exception) {
             throw MatrixReaderExceptions.MatrixParsedException()
@@ -61,9 +61,4 @@ class MatrixReader {
         val parsedData = getParsedData(data)
         return Matrix(matrix = parsedData, inaccuracy = inaccuracy)
     }
-}
-
-fun main() {
-    val a = MatrixReader().getParsedMatrixFromConsole()
-    println(a)
 }
