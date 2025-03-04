@@ -3,6 +3,7 @@ package ui.io
 import ui.Event
 import ui.State
 import utils.StringConstants
+import utils.generateMatrixAssetFile
 
 class IoController(private val matrixReader: MatrixReader) {
     fun reduce(currentState: State.Input): Event {
@@ -23,10 +24,25 @@ class IoController(private val matrixReader: MatrixReader) {
 
                 "mode" -> getMod(currentInputType = currentState.inputType)
 
+                "gen" -> generateRandom(args = inputText)
+
                 else -> unexpectedCommand()
             }
         } catch (ex: RuntimeException) {
             quit()
+        }
+    }
+
+    private fun generateRandom(args: List<String>): Event {
+        try {
+            val n = args[1].toInt()
+            val path = "/Users/arekalov/Itmo/4/CompMat/CompMat-lab1/src/main/resources"
+            val fileName = "genAsset"
+            generateMatrixAssetFile(filename = fileName, n = n, filePath = path)
+            return chmod(args = listOf("chmod", "file", "$path/$fileName"))
+        } catch (ex: Exception) {
+            printMessage(constant = StringConstants.INVALID_ARGUMENT_COUNT_ERROR, needToPrintDivider = true)
+            return Event.Nothing
         }
     }
 

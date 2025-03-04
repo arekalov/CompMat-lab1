@@ -8,7 +8,8 @@ enum class StringConstants(val msg: String) {
     GREETING_MSG("Hello, this is System of Linear Equations calculator!"),
     HELP_MSG(
         "Menu: \n1) help - to see this text again \n2) chmod <file filepath | console> - select input mode\n" +
-                "3) mode - get current mode\n4) calc - start solving system \n5) quit - bye, bye"
+                "3) mode - get current mode\n4) calc - start solving system \n" +
+                "5) gen <n> - generate matrix with size and set it to mode \n6) quit - bye, bye"
     ),
     BYE_MSG("Bye, bye!"),
     CALCULATION_MSG("Calculation in progress, pleas wait!"),
@@ -23,4 +24,5 @@ enum class StringConstants(val msg: String) {
     EMPTY_COMMAND_ERROR("Empty command, try again"),
     INVALID_COMMAND_ERROR("Invalid command, try again"),
     INVALID_INPUT_TYPE_ERROR("Invalid input type, select from <file/console> and try again"),
+    INVALID_ARGUMENT_COUNT_ERROR("Error of argument count. Please input n(mandatory) and inaccuracy(optional)")
 }

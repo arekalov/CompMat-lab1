@@ -26,5 +26,5 @@ fun generateMatrixAssetFile(
 }
 
 fun main() {
-    generateMatrixAssetFile(filename = "asset4", n = 4, inaccuracy = 0.001)
+    generateMatrixAssetFile(filename = "asset5", n = 20, inaccuracy = 0.01)
 }

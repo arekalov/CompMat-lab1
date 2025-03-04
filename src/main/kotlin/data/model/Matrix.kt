@@ -39,6 +39,9 @@ data class Matrix(
     }
 
     private fun findDiagonallyDominantMatrix(matrix: List<List<Double>>): List<List<Double>>? {
+        if (matrix.size > 10) {
+            throw MatrixReaderExceptions.TooBigMatrixWithoutDiagonallyDominant()
+        }
         val permutations = matrix.indices.toList().permutations()
 
         perm@ for (perm in permutations) {

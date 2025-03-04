@@ -9,4 +9,6 @@ sealed class MatrixReaderExceptions(override val message: String) : Exception() 
     class EmptyMatrix : MatrixReaderExceptions("Error: emptyMatrix")
     class NotDiagonallyDominantException :
         MatrixReaderExceptions("Error: cannot convert matrix to diagonally dominant form")
+    class TooBigMatrixWithoutDiagonallyDominant :
+        MatrixReaderExceptions("Error: given matrix not in diagonally dominant form and too big for permutations")
 }
